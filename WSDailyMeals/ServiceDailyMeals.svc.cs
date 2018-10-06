@@ -1,10 +1,13 @@
-﻿using System;
+﻿using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
+using WSDailyMeals.DAOS;
+using WSReportApp.Models;
 
 namespace WSDailyMeals
 {
@@ -14,6 +17,10 @@ namespace WSDailyMeals
     {
         public string GetData(string value)
         {
+            DAOAliments daoAliments = new DAOAliments();
+
+            List<Alimento> aliments = daoAliments.getAliments();
+
             return string.Format("You entered: {0}", value);
         }
 

@@ -17,3 +17,13 @@ c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDail
 c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\obj\Debug\WSDailyMeals.csprojResolveAssemblyReference.cache
 c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\obj\Debug\WSDailyMeals.dll
 c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\obj\Debug\WSDailyMeals.pdb
+c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\bin\DnsClient.dll
+c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\bin\MongoDB.Bson.dll
+c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\bin\MongoDB.Driver.Core.dll
+c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\bin\MongoDB.Driver.dll
+c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\bin\System.Buffers.dll
+c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\bin\System.Runtime.InteropServices.RuntimeInformation.dll
+c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\bin\DnsClient.xml
+c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\bin\MongoDB.Bson.xml
+c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\bin\MongoDB.Driver.xml
+c:\users\sahid\documents\visual studio 2015\Projects\WSDailyMealsSolution\WSDailyMeals\bin\MongoDB.Driver.Core.xml
