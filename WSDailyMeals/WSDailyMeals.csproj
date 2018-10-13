@@ -120,6 +120,7 @@
   <ItemGroup>
     <Compile Include="Algorithm\Core.cs" />
     <Compile Include="DAOS\DAOAliments.cs" />
+    <Compile Include="Individuo.cs" />
     <Compile Include="Models\Alimento.cs" />
     <Compile Include="Models\Dictionaries.cs" />
     <Compile Include="ServiceDailyMeals.svc.cs">

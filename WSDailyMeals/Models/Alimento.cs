@@ -74,26 +74,7 @@ namespace WSReportApp.Models
             }
         }
 
-        public double Fitness { get; private set; }
-
-        public double CalculateFitness(double metaLipidos, double metaCarbos, double metaProteinas, double metaColesterol, double metaSodio)
-        {
-            if (KcalLipidos > metaLipidos) { return 0; }
-            if (KcalCarbos > metaCarbos) { return 0; }
-            if (KcalProteina > metaProteinas) { return 0; }
-            //if (String.IsNullOrEmpty(Colesterol.ToString())) { Colesterol = 0; }
-            //if (String.IsNullOrEmpty(Sodio.ToString())) { Sodio = 0; }
-            //if (((double)Colesterol) > metaColesterol) { return 0; }
-            //if (((double)Sodio) > metaLipidos) { return 0; }
-            
-            double fitnessCarbos = (KcalCarbos / metaCarbos) * 100;
-            double fitnessLipidos = (KcalLipidos / metaLipidos) * 100;
-            double fitnessProteinas = (KcalLipidos / metaLipidos) * 100;
-
-            double fitnessTotal = fitnessCarbos + fitnessLipidos + fitnessProteinas;
-            Fitness = (fitnessTotal / 300) * 100;
-            return Fitness;
-        }
+        
 
         public void Mutate(int Idx)
         {
@@ -122,7 +103,7 @@ namespace WSReportApp.Models
             //calculateFitness();
         }
 
-        /*public override string ToString()
+        public override string ToString()
         {
             string temp = "[";
             for (int i = 0; i < dimensions; i++)
@@ -132,6 +113,6 @@ namespace WSReportApp.Models
             temp = temp.TrimEnd(new char[] { ' ', ',' });
             temp += "]";
             return "Cromosoma: " + temp + " Fitness: " + fitness.ToString("N2");
-        }*/
+        }
     }
 }
