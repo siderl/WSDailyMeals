@@ -1,4 +1,4 @@
-/.vs
-/WSDailyMeals/bin
-/WSDailyMeals/obj
-/WSDailyMeals/Properties
+/.vs/*
+/WSDailyMeals/bin/*
+/WSDailyMeals/obj/*
+/WSDailyMeals/Properties/*
