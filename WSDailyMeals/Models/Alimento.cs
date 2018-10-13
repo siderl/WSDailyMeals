@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 
 namespace WSReportApp.Models
@@ -74,45 +75,75 @@ namespace WSReportApp.Models
             }
         }
 
-        
-
-        public void Mutate(int Idx)
-        {
-            /*** TODO: Preguntar al profe si podemos seleccionar otro alimento de la misma categoría
-             *  ¿Qué es más eficiente/mejor?
-             *  ¿Cambiar al individuo completamente? (Seleccionando un índice diferente dentro de la misma categoria) (menos tardado, pero posiblemente menos accurate y no respeta la mutacion al 100%)
-             *  ¿O calcular atributos nuevos y buscar al alimento que se asemeje más a esos atributos? (dentro de la misma categoría) (más tardado, pero respeta más la mutación)
-             */
-            switch (Idx) {
-                case 0:
-                    //mutar Carbos
-                    break;
-                case 1:
-                    //mutar Proteinas
-                    break;
-                case 2:
-                    //mutar Lipidos
-                    break;
-                case 3:
-                    //mutar Sodio
-                    break;
-                case 4:
-                    //mutar Colesterol
-                    break;
-            }
-            //calculateFitness();
+        public double getKcal() {
+            if (String.IsNullOrEmpty(EnergiaKcal.ToString())) return 0.0;
+            if (EnergiaKcal is int) { return ((int)EnergiaKcal) * 1.0; }
+            if (EnergiaKcal is double) { return ((double)EnergiaKcal); }
+            return 0.0;
         }
+        
 
         public override string ToString()
         {
-            string temp = "[";
-            for (int i = 0; i < dimensions; i++)
+            StringBuilder temp = new StringBuilder();
+            temp.Append(AlimentoName);
+            temp.Append(" (");
+            temp.Append(Categoria);
+            temp.Append("): ");
+            temp.Append("Carbos: ");
+            temp.Append(KcalCarbos);
+            temp.Append(" Prots: ");
+            temp.Append(KcalProteina);
+            temp.Append(" Lips: ");
+            temp.Append(KcalLipidos);
+            return temp.ToString();
+        }
+
+        public static bool operator ==(Alimento t1, Alimento t2) {
+            if (ReferenceEquals(t1, t2))
             {
-                temp += Cromosoma[i].ToString("N2") + ", ";
+                return true;
             }
-            temp = temp.TrimEnd(new char[] { ' ', ',' });
-            temp += "]";
-            return "Cromosoma: " + temp + " Fitness: " + fitness.ToString("N2");
+
+            if (ReferenceEquals(t1, null))
+            {
+                return false;
+            }
+            if (ReferenceEquals(t2, null))
+            {
+                return false;
+            }
+
+            if (t1.ID == t2.ID) {
+                return true;
+            }
+            return false;
+        }
+
+        static public bool operator !=(Alimento t1, Alimento t2)
+        {
+            return !(t1 == t2);
+        }
+
+        public override bool Equals (object obj)
+        {
+            if (obj is Alimento) {
+                if (ReferenceEquals(obj, this))
+                {
+                    return true;
+                }
+
+                if (ReferenceEquals(obj, null))
+                {
+                    return false;
+                }
+
+                if (((Alimento)obj).ID == ID)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

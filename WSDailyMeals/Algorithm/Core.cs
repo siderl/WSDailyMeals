@@ -2,51 +2,58 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using WSReportApp.Models;
+using WSDailyMeals.Models;
 //using 
 
 namespace WSDailyMeals.Algorithm
 {
     public class Core
     {
-        private Random selector;
+        private readonly Random selector;
+        Dictionaries dict;
+
+        public Individuo result { get; private set; }
 
         /// <summary>
         /// Algoritmo Genetico Continuo
         /// </summary>
+        /// <param name="Lips">Objetivo de Lipidos</param>
+        /// <param name="Carbs">Objetivo de Carbohidratos</param>
+        /// <param name="Prots">Objetivo de Proteinas</param>
         /// <param name="popSize">Tamaño de población</param>
         /// <param name="gCount">Conteo de generación</param>
-        /*public Core(string comida, int popSize = 20, int gCount = 100)
+        public Core(double Lips, double Carbs, double Prots, int popSize = 50, int gCount = 50)
         {
-            //TODO: hardcode mutationFactor. Consultar con Tonatiuh
-            // consultar tamaño optimo de poblaciones
+            //TODO: Consultar con Tonatiuh.
+            // consultar tamaño optimo de poblaciones / generaciones
             double factor = .5;
-            int dimensions = 5;
+            int dimensions = 10;
             
             selector = new Random((int)DateTime.Now.Ticks);
-            
+            List<Individuo> padres = new List<Individuo>(popSize);
+            List<Individuo> hijos = new List<Individuo>(popSize);
 
-            List<Alimento> padres = new List<Alimento>(popSize);
-            List<Alimento> hijos = new List<Alimento>(popSize);
+            dict = new Dictionaries();
 
             //
             Console.WriteLine("Padres.");
             for (int i = 0; i < popSize; i++)
             {
-                Alimento x = new Alimento();
+                Individuo x = new Individuo(ref selector, Lips, Carbs, Prots, ref dict);
                 padres.Add(x);
                 Console.WriteLine("Padre " + i.ToString() + ": " + x.ToString());
                 //Because the Random function is based on time.
                 System.Threading.Thread.Sleep(5);
             }
 
+            int bestSon = -1;
             UInt16 gens = 0;
-            while (gens < genCount)
+            while (gens < gCount)
             {
                 while (padres.Count != hijos.Count)
                 {
-                    Alimento firstFather = Ruleta(padres);
-                    Alimento secondFather;
+                    Individuo firstFather = Ruleta(padres);
+                    Individuo secondFather;
                     bool SameCromosome;
                     do
                     {
@@ -54,51 +61,41 @@ namespace WSDailyMeals.Algorithm
                         SameCromosome = true;
                         for (int i = 0; i < dimensions; i++)
                         {
-                            if (firstFather.KcalProteina != secondFather.KcalProteina)
-                            {
-                                SameCromosome = false;
-                                break;
-                            }
-                            if (firstFather.KcalLipidos != secondFather.KcalLipidos)
-                            {
-                                SameCromosome = false;
-                                break;
-                            }
-                            if (firstFather.KcalCarbos != secondFather.KcalCarbos)
-                            {
+                            if (firstFather.dieta[i] != secondFather.dieta[i]) {
                                 SameCromosome = false;
                                 break;
                             }
                         }
                     } while (SameCromosome);
                     int CrossingFactor = selector.Next(1, dimensions);
-                    hijos.Add(new Alimento(firstFather, secondFather, CrossingFactor, dimensions, ref selector));
-                    hijos.Add(new Alimento(firstFather, secondFather, CrossingFactor, dimensions, ref selector));
+                    hijos.Add(new Individuo(firstFather, secondFather, CrossingFactor, dimensions));
+                    hijos.Add(new Individuo(firstFather, secondFather, CrossingFactor, dimensions));
                 }
 
                 MutateSons(hijos, factor, dimensions);
 
                 padres.Clear();
-                Console.WriteLine("Generación: " + gens + " con factor de mutacion: " + factor.ToString("P"));
                 int son = 1;
+                bestSon = -1;
                 double maxFitness = 0;
-                foreach (Alimento f in hijos)
+                foreach (Individuo f in hijos)
                 {
-                    Console.WriteLine("Hijo " + son + ": " + f);
                     f.CalculateFitness();
                     padres.Add(f);
-                    if(maxFitness )
+                    if (maxFitness < f.Fitness) {
+                        maxFitness = f.Fitness;
+                        bestSon = son - 1;
+                    }
                     son++;
 
                 }
                 hijos.Clear();
                 gens++;
             }
-            Console.Write("Press any key to continue . . . ");
-            Console.ReadKey(true);
-        }*/
+            result = padres[bestSon];
+        }
 
-        private void MutateSons(List<Alimento> sons, double mutationFactor, int dimensions)
+        private void MutateSons(List<Individuo> sons, double mutationFactor, int dimensions)
         {
             int mutatedCount = (int)(mutationFactor * sons.Count * dimensions);
             for (int i = 0; i < mutatedCount; i++)
@@ -106,11 +103,11 @@ namespace WSDailyMeals.Algorithm
                 int j = selector.Next(0, sons.Count * dimensions);
                 int mutatedIndividual = j / dimensions;
                 int mutatedAlelo = j % dimensions;
-                sons[mutatedIndividual].Mutate(mutatedAlelo);
+                sons[mutatedIndividual].Mutate(mutatedAlelo, ref dict);
             }
         }
 
-        private Alimento Ruleta(List<Alimento> padres)
+        private Individuo Ruleta(List<Individuo> padres)
         {
             double temp = selector.NextDouble();
             double totalFitness = 0, sumatoria = 0;

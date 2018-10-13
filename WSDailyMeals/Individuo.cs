@@ -1,61 +1,137 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Web;
+using WSDailyMeals.Models;
+using WSReportApp.Models;
 
 namespace WSDailyMeals
 {
+    [DataContract]
     public class Individuo
     {
+        [DataMember]
+        private readonly double MetaLipidos, MetaCarbos, MetaProteinas;
+        [DataMember]
+        public readonly string hash;
+        [DataMember]
+        public List<Alimento> dieta = new List<Alimento>();
+        //TODO: Agregar sumatoria de calorias como propiedad
+
         public double Fitness { get; private set; }
 
-        public double CalculateFitness(double metaLipidos, double metaCarbos, double metaProteinas, double metaColesterol, double metaSodio)
+        public Individuo(ref Random selector, double Lipidos, double Carbos, double Proteinas, ref Dictionaries dic) {
+            MetaLipidos = Lipidos;
+            MetaCarbos = Carbos;
+            MetaProteinas = Proteinas;
+            
+            //generacion de hash
+            //int = dieta.GetHashCode()
+            
+            //Desayuno
+            this.dieta.Add(dic.drinks[selector.Next(dic.drinks.Count)]);
+            this.dieta.Add(dic.breakfasts[selector.Next(dic.breakfasts.Count)]);
+            //Colacion 1
+            this.dieta.Add(dic.collations[selector.Next(dic.collations.Count)]);
+            //Comida
+            this.dieta.Add(dic.drinks[selector.Next(dic.drinks.Count)]);
+            this.dieta.Add(dic.strongMeals[selector.Next(dic.strongMeals.Count)]);
+            this.dieta.Add(dic.fittings[selector.Next(dic.fittings.Count)]);
+            this.dieta.Add(dic.soups[selector.Next(dic.soups.Count)]);
+            //Colacion 2
+            this.dieta.Add(dic.collations[selector.Next(dic.collations.Count)]);
+            //Cena
+            this.dieta.Add(dic.drinks[selector.Next(dic.drinks.Count)]);
+            this.dieta.Add(dic.breakfasts[selector.Next(dic.breakfasts.Count)]);
+
+            CalculateFitness();
+
+        }
+        
+        public Individuo(Individuo Padre1, Individuo Padre2, int CrossingFactor, int dim)
         {
-            if (KcalLipidos > metaLipidos) { return 0; }
-            if (KcalCarbos > metaCarbos) { return 0; }
-            if (KcalProteina > metaProteinas) { return 0; }
-            //if (String.IsNullOrEmpty(Colesterol.ToString())) { Colesterol = 0; }
-            //if (String.IsNullOrEmpty(Sodio.ToString())) { Sodio = 0; }
-            //if (((double)Colesterol) > metaColesterol) { return 0; }
-            //if (((double)Sodio) > metaLipidos) { return 0; }
+            Fitness = 0;
+            dieta = new List<Alimento>(dim);
 
-            double fitnessCarbos = (KcalCarbos / metaCarbos) * 100;
-            double fitnessLipidos = (KcalLipidos / metaLipidos) * 100;
-            double fitnessProteinas = (KcalLipidos / metaLipidos) * 100;
+            MetaLipidos = Padre1.MetaLipidos;
+            MetaCarbos = Padre1.MetaCarbos;
+            MetaProteinas = Padre1.MetaProteinas;
 
-            double fitnessTotal = fitnessCarbos + fitnessLipidos + fitnessProteinas;
-            Fitness = (fitnessTotal / 300) * 100;
-            return Fitness;
+            for (int i = 0; i < dieta.Capacity; i++)
+            {
+                if (i < CrossingFactor)
+                    dieta.Add(Padre1.dieta[i]);
+                else
+                    dieta.Add(Padre2.dieta[i]);
+            }
+            CalculateFitness();
         }
 
-
-
-        public void Mutate(int Idx)
+        public double CalculateFitness()
         {
-            /*** TODO: Preguntar al profe si podemos seleccionar otro alimento de la misma categoría
-             *  ¿Qué es más eficiente/mejor?
-             *  ¿Cambiar al individuo completamente? (Seleccionando un índice diferente dentro de la misma categoria) (menos tardado, pero posiblemente menos accurate y no respeta la mutacion al 100%)
-             *  ¿O calcular atributos nuevos y buscar al alimento que se asemeje más a esos atributos? (dentro de la misma categoría) (más tardado, pero respeta más la mutación)
-             */
-            switch (Idx)
-            {
+            double sumatoriaLips = 0, sumatoriaCarbs = 0, sumatoriaProts = 0; // sumatoriaKcal = 0
+            double fitnessLips = 0, fitnessCarbs = 0, fitnessProts = 0;
+            foreach (Alimento temp in dieta) {
+                sumatoriaLips += temp.KcalLipidos;
+                sumatoriaCarbs += temp.KcalCarbos;
+                sumatoriaProts += temp.KcalProteina;
+            }
+
+            fitnessLips = (sumatoriaLips / MetaLipidos) * 100;
+            if (fitnessLips > 100) { fitnessLips = 200 - fitnessLips; }
+            fitnessCarbs = (sumatoriaCarbs / MetaCarbos) * 100;
+            if (fitnessCarbs > 100) { fitnessCarbs = 200 - fitnessCarbs; }
+            fitnessProts = (sumatoriaProts / MetaProteinas) * 100;
+            if (fitnessProts > 100) { fitnessProts = 200 - fitnessProts; }
+
+            double fitnessTotal = ((fitnessLips + fitnessCarbs + fitnessProts) / 300) * 100;
+            Fitness = fitnessTotal;
+            return fitnessTotal;
+        }
+        
+
+        public void Mutate(int Idx, ref Dictionaries dict)
+        {
+            //obtener lista
+            List<Alimento> candidatos = new List<Alimento>();
+            switch (Idx) {
                 case 0:
-                    //mutar Carbos
+                case 8:
+                    //bebida cena y desayuno - alimento que queremos mutar (usar LINQ)
+                    candidatos = dict.drinks.Where(x => x.ID != dieta[Idx].ID).ToList();
                     break;
                 case 1:
-                    //mutar Proteinas
+                case 9:
+                    candidatos = dict.breakfasts.Where(x => x.ID != dieta[Idx].ID).ToList();
+                    //platillo cena y desayuno - alimento que queremos mutar (usar LINQ)
                     break;
                 case 2:
-                    //mutar Lipidos
+                case 7:
+                    candidatos = dict.collations.Where(x => x.ID != dieta[Idx].ID).ToList();
+                    //colaciones 1 y 2(fruta|verdura|grasas con proteína) - alimento que queremos mutar (usar LINQ)
                     break;
                 case 3:
-                    //mutar Sodio
+                    candidatos = dict.drinks.Where(x => x.ID != dieta[Idx].ID).ToList();
+                    //bebida comida - alimento que queremos mutar (usar LINQ)
                     break;
                 case 4:
-                    //mutar Colesterol
+                    candidatos = dict.strongMeals.Where(x => x.ID != dieta[Idx].ID).ToList();
+                    //plato fuerte - alimento que queremos mutar (usar LINQ)
+                    break;
+                case 5:
+                    candidatos = dict.fittings.Where(x => x.ID != dieta[Idx].ID).ToList();
+                    //guarnicion comida - alimento que queremos mutar (usar LINQ)
+                    break;
+                case 6:
+                    candidatos = dict.soups.Where(x => x.ID != dieta[Idx].ID).ToList();
+                    // sopa|sopa seca - alimento que queremos mutar (usar LINQ)
                     break;
             }
-            //calculateFitness();
+
+            Random r = new Random((int)DateTime.Now.Ticks);
+            int newIdx = r.Next(0, candidatos.Count);
+            dieta[Idx] = candidatos[newIdx];
         }
     }
 }

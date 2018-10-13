@@ -17,8 +17,7 @@ namespace WSDailyMeals
         [WebGet(UriTemplate = "/GetData/{value}",
         ResponseFormat = WebMessageFormat.Json,
         BodyStyle = WebMessageBodyStyle.Bare)]
-        string GetData(string value);
-        // TODO: Add your service operations here
+        Individuo GetData(string value);
     }
 
 

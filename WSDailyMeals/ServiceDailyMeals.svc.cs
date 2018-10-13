@@ -8,6 +8,8 @@ using System.ServiceModel.Web;
 using System.Text;
 using WSDailyMeals.DAOS;
 using WSReportApp.Models;
+using WSDailyMeals.Models;
+using WSDailyMeals.Algorithm;
 
 namespace WSDailyMeals
 {
@@ -15,15 +17,21 @@ namespace WSDailyMeals
     // NOTE: In order to launch WCF Test Client for testing this service, please select Service1.svc or Service1.svc.cs at the Solution Explorer and start debugging.
     public class ServiceDailyMeals : IServiceDailyMeals
     {
-        public string GetData(string value)
+        public Individuo GetData(string value)
         {
-            DAOAliments daoAliments = new DAOAliments();
+            double totalKCal = double.Parse(value);
 
-            List<Alimento> aliments = daoAliments.GetAliments();
+            return getDiet(totalKCal);
+        }
 
-            
+        public Individuo getDiet(double totalKCal)
+        {
+            double KCalProt = totalKCal * .15;
+            double KCalCarbs = totalKCal * .55;
+            double KCalLipid = totalKCal * .3;
 
-            return string.Format("You entered: {0}", value);
+            Core c = new Core(KCalLipid, KCalCarbs, KCalProt);
+            return c.result;
         }
 
     }
