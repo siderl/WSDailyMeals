@@ -9,9 +9,13 @@ namespace WSDailyMeals.DAOS
 {
     public class DAOAliments
     {
-        public List<Alimento> getAliments()
+        public List<Alimento> GetAliments()
         {
-            MongoClient client = new MongoClient("mongodb://ec2-18-219-187-111.us-east-2.compute.amazonaws.com:27017");
+            // Produccion
+            //MongoClient client = new MongoClient("mongodb://ec2-18-219-187-111.us-east-2.compute.amazonaws.com:27017");
+
+            //Pruebas
+            MongoClient client = new MongoClient("mongodb://localhost:27017");
 
             IMongoDatabase db = client.GetDatabase("DailyMeals");
 

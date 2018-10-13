@@ -19,7 +19,9 @@ namespace WSDailyMeals
         {
             DAOAliments daoAliments = new DAOAliments();
 
-            List<Alimento> aliments = daoAliments.getAliments();
+            List<Alimento> aliments = daoAliments.GetAliments();
+
+            
 
             return string.Format("You entered: {0}", value);
         }
