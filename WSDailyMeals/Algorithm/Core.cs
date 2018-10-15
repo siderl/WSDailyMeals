@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using WSDailyMeals.Models;
 //using 
 
@@ -22,7 +20,7 @@ namespace WSDailyMeals.Algorithm
         /// <param name="Prots">Objetivo de Proteinas</param>
         /// <param name="popSize">Tamaño de población</param>
         /// <param name="gCount">Conteo de generación</param>
-        public Core(double Lips, double Carbs, double Prots, int popSize = 50, int gCount = 50)
+        public Core(double Lips, double Carbs, double Prots, int popSize = 50, int gCount = 100)
         {
             //TODO: Consultar con Tonatiuh.
             // consultar tamaño optimo de poblaciones / generaciones
@@ -48,7 +46,8 @@ namespace WSDailyMeals.Algorithm
 
             int bestSon = -1;
             UInt16 gens = 0;
-            while (gens < gCount)
+            double maxFitness = 0;
+            while (maxFitness < 95)//while (gens < gCount)
             {
                 while (padres.Count != hijos.Count)
                 {
@@ -77,7 +76,7 @@ namespace WSDailyMeals.Algorithm
                 padres.Clear();
                 int son = 1;
                 bestSon = -1;
-                double maxFitness = 0;
+                maxFitness = 0;
                 foreach (Individuo f in hijos)
                 {
                     f.CalculateFitness();

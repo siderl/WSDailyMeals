@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Web;
+using System.Text;
 using WSDailyMeals.Models;
 using WSReportApp.Models;
 
@@ -17,8 +17,9 @@ namespace WSDailyMeals
         public readonly string hash;
         [DataMember]
         public List<Alimento> dieta = new List<Alimento>();
-        //TODO: Agregar sumatoria de calorias como propiedad
-
+        [DataMember]
+        public double totalKCal;
+        [DataMember]
         public double Fitness { get; private set; }
 
         public Individuo(ref Random selector, double Lipidos, double Carbos, double Proteinas, ref Dictionaries dic) {
@@ -46,7 +47,6 @@ namespace WSDailyMeals
             this.dieta.Add(dic.breakfasts[selector.Next(dic.breakfasts.Count)]);
 
             CalculateFitness();
-
         }
         
         public Individuo(Individuo Padre1, Individuo Padre2, int CrossingFactor, int dim)
@@ -85,12 +85,13 @@ namespace WSDailyMeals
             fitnessProts = (sumatoriaProts / MetaProteinas) * 100;
             if (fitnessProts > 100) { fitnessProts = 200 - fitnessProts; }
 
+            totalKCal = sumatoriaLips + sumatoriaCarbs + sumatoriaProts;
+
             double fitnessTotal = ((fitnessLips + fitnessCarbs + fitnessProts) / 300) * 100;
             Fitness = fitnessTotal;
             return fitnessTotal;
         }
         
-
         public void Mutate(int Idx, ref Dictionaries dict)
         {
             //obtener lista
@@ -132,6 +133,14 @@ namespace WSDailyMeals
             Random r = new Random((int)DateTime.Now.Ticks);
             int newIdx = r.Next(0, candidatos.Count);
             dieta[Idx] = candidatos[newIdx];
+        }
+
+        public override string ToString()
+        {
+            StringBuilder temp = new StringBuilder();
+            temp.Append("KiloCalorias Totales: ");
+            temp.Append(totalKCal);
+            return temp.ToString();
         }
     }
 }
