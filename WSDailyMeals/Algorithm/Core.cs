@@ -24,7 +24,7 @@ namespace WSDailyMeals.Algorithm
         {
             //TODO: Consultar con Tonatiuh.
             // consultar tamaño optimo de poblaciones / generaciones
-            double factor = .5;
+            double factor = .05;
             int dimensions = 10;
             
             selector = new Random((int)DateTime.Now.Ticks);
@@ -68,7 +68,7 @@ namespace WSDailyMeals.Algorithm
                     } while (SameCromosome);
                     int CrossingFactor = selector.Next(1, dimensions);
                     hijos.Add(new Individuo(firstFather, secondFather, CrossingFactor, dimensions));
-                    hijos.Add(new Individuo(firstFather, secondFather, CrossingFactor, dimensions));
+                    hijos.Add(new Individuo(secondFather, firstFather, CrossingFactor, dimensions));
                 }
 
                 MutateSons(hijos, factor, dimensions);
