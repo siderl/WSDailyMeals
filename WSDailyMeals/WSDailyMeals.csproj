@@ -114,12 +114,16 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Global.asax" />
     <Content Include="ServiceDailyMeals.svc" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Algorithm\Core.cs" />
     <Compile Include="DAOS\DAOAliments.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
     <Compile Include="Individuo.cs" />
     <Compile Include="Models\Alimento.cs" />
     <Compile Include="Models\Dictionaries.cs" />
