@@ -48,6 +48,8 @@ namespace WSReportApp.Models
         [BsonElement("colesterol")]
         public object Colesterol { get; set; }
 
+        public double multiplier = 1.0;
+
         public double KcalProteina {
             get {
                 if (String.IsNullOrEmpty(Proteina.ToString())) return 0;

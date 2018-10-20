@@ -13,6 +13,7 @@ namespace WSDailyMeals.Models
         public List<Alimento> fittings { get; private set; }
         public List<Alimento> soups { get; private set; }
         public List<Alimento> strongMeals { get; private set; }
+        public List<double> multipliers { get; private set; }
 
 
         public Dictionaries() {
@@ -38,6 +39,7 @@ namespace WSDailyMeals.Models
 
             strongMeals = aliments.Where(x => (string)x.Categoria == "platillos:plato fuerte")
                 .ToList();
+            multipliers = new List<double>() { 1, 1.5, 2, 2.5, 3 };
         }
     }
 }

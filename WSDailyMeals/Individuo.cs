@@ -33,15 +33,38 @@ namespace WSDailyMeals
             //Desayuno
             this.dieta.Add(dic.drinks[selector.Next(dic.drinks.Count)]);
             this.dieta.Add(dic.breakfasts[selector.Next(dic.breakfasts.Count)]);
+
             //Colacion 1
-            this.dieta.Add(dic.collations[selector.Next(dic.collations.Count)]);
+            //Multiplicador aleatorio de la colacion
+            double multiplier = dic.multipliers[selector.Next(dic.multipliers.Count)];
+            Alimento collation = dic.collations[selector.Next(dic.collations.Count)];
+            collation.multiplier = multiplier;
+            MultiplyPortion(ref collation);
+            this.dieta.Add(collation);
+            
             //Comida
             this.dieta.Add(dic.drinks[selector.Next(dic.drinks.Count)]);
             this.dieta.Add(dic.strongMeals[selector.Next(dic.strongMeals.Count)]);
-            this.dieta.Add(dic.fittings[selector.Next(dic.fittings.Count)]);
-            this.dieta.Add(dic.soups[selector.Next(dic.soups.Count)]);
+
+            //Multiplicador aleatorio de la guarnicion
+            Alimento fitting = dic.fittings[selector.Next(dic.fittings.Count)];
+            fitting.multiplier = multiplier;
+            MultiplyPortion(ref fitting);
+            this.dieta.Add(fitting);
+
+            //Multiplicador aleatorio de las porciones de sopa
+            Alimento soup = dic.soups[selector.Next(dic.soups.Count)];
+            soup.multiplier = multiplier;
+            MultiplyPortion(ref soup);
+            this.dieta.Add(soup);
+
             //Colacion 2
-            this.dieta.Add(dic.collations[selector.Next(dic.collations.Count)]);
+            //Multiplicador aleatorio de la colacion
+            Alimento collation1 = dic.collations[selector.Next(dic.collations.Count)];
+            collation1.multiplier = multiplier;
+            MultiplyPortion(ref collation1);
+            this.dieta.Add(collation1);
+            
             //Cena
             this.dieta.Add(dic.drinks[selector.Next(dic.drinks.Count)]);
             this.dieta.Add(dic.breakfasts[selector.Next(dic.breakfasts.Count)]);
@@ -97,42 +120,64 @@ namespace WSDailyMeals
             //obtener lista
             List<Alimento> candidatos = new List<Alimento>();
             switch (Idx) {
-                case 0:
+                case 0: //bebida cena y desayuno
                 case 8:
-                    //bebida cena y desayuno - alimento que queremos mutar (usar LINQ)
                     candidatos = dict.drinks.Where(x => x.ID != dieta[Idx].ID).ToList();
                     break;
-                case 1:
+                case 1: //platillo cena y desayuno
                 case 9:
                     candidatos = dict.breakfasts.Where(x => x.ID != dieta[Idx].ID).ToList();
-                    //platillo cena y desayuno - alimento que queremos mutar (usar LINQ)
                     break;
-                case 2:
+                case 2: //colaciones 1 y 2(fruta|verdura|grasas con proteína)
                 case 7:
                     candidatos = dict.collations.Where(x => x.ID != dieta[Idx].ID).ToList();
-                    //colaciones 1 y 2(fruta|verdura|grasas con proteína) - alimento que queremos mutar (usar LINQ)
                     break;
-                case 3:
+                case 3: //bebida comida
                     candidatos = dict.drinks.Where(x => x.ID != dieta[Idx].ID).ToList();
-                    //bebida comida - alimento que queremos mutar (usar LINQ)
                     break;
-                case 4:
+                case 4: //plato fuerte
                     candidatos = dict.strongMeals.Where(x => x.ID != dieta[Idx].ID).ToList();
-                    //plato fuerte - alimento que queremos mutar (usar LINQ)
                     break;
-                case 5:
+                case 5: //guarnicion comida
                     candidatos = dict.fittings.Where(x => x.ID != dieta[Idx].ID).ToList();
-                    //guarnicion comida - alimento que queremos mutar (usar LINQ)
                     break;
-                case 6:
+                case 6: //sopa|sopa seca
                     candidatos = dict.soups.Where(x => x.ID != dieta[Idx].ID).ToList();
-                    // sopa|sopa seca - alimento que queremos mutar (usar LINQ)
                     break;
             }
 
             Random r = new Random((int)DateTime.Now.Ticks);
             int newIdx = r.Next(0, candidatos.Count);
-            dieta[Idx] = candidatos[newIdx];
+            Alimento newMeal = candidatos[newIdx];
+            if (Idx == 5 || Idx == 6 || Idx == 2 || Idx == 7) {
+                if (String.IsNullOrEmpty(newMeal.Proteina.ToString())) { newMeal.Proteina = 0; }
+                if (newMeal.Proteina is int) { newMeal.Proteina = (int)newMeal.Proteina / newMeal.multiplier; }
+                else if (newMeal.Proteina is double) { newMeal.Proteina = ((double)newMeal.Proteina) / newMeal.multiplier; }
+
+                if (String.IsNullOrEmpty(newMeal.CarboHidratos.ToString())) { newMeal.CarboHidratos = 0; }
+                if (newMeal.CarboHidratos is int) { newMeal.CarboHidratos = (int)newMeal.CarboHidratos / newMeal.multiplier; }
+                else if (newMeal.CarboHidratos is double) { newMeal.CarboHidratos = ((double)newMeal.CarboHidratos) / newMeal.multiplier; }
+
+                if (String.IsNullOrEmpty(newMeal.Lipidos.ToString())) { newMeal.Lipidos = 0; }
+                if (newMeal.Lipidos is int) { newMeal.Lipidos = (int)newMeal.Lipidos / newMeal.multiplier; }
+                else if (newMeal.Lipidos is double) { newMeal.Lipidos = ((double)newMeal.Lipidos) / newMeal.multiplier; }
+
+                double multiplier = dict.multipliers[r.Next(dict.multipliers.Count)];
+                newMeal.multiplier = multiplier;
+
+                if (String.IsNullOrEmpty(newMeal.Proteina.ToString())) { newMeal.Proteina = 0; }
+                if (newMeal.Proteina is int) { newMeal.Proteina = (int)newMeal.Proteina * multiplier; }
+                else if (newMeal.Proteina is double) { newMeal.Proteina = ((double)newMeal.Proteina) * multiplier; }
+
+                if (String.IsNullOrEmpty(newMeal.CarboHidratos.ToString())) { newMeal.CarboHidratos = 0; }
+                if (newMeal.CarboHidratos is int) { newMeal.CarboHidratos = (int)newMeal.CarboHidratos * multiplier; }
+                else if (newMeal.CarboHidratos is double) { newMeal.CarboHidratos = ((double)newMeal.CarboHidratos) * multiplier; }
+
+                if (String.IsNullOrEmpty(newMeal.Lipidos.ToString())) { newMeal.Lipidos = 0; }
+                if (newMeal.Lipidos is int) { newMeal.Lipidos = (int)newMeal.Lipidos * multiplier; }
+                else if (newMeal.Lipidos is double) { newMeal.Lipidos = ((double)newMeal.Lipidos) * multiplier; }
+            }
+            dieta[Idx] = newMeal;
         }
 
         public override string ToString()
@@ -141,6 +186,20 @@ namespace WSDailyMeals
             temp.Append("KiloCalorias Totales: ");
             temp.Append(totalKCal);
             return temp.ToString();
+        }
+
+        private void MultiplyPortion(ref Alimento food) {
+            if (String.IsNullOrEmpty(food.Proteina.ToString())) { food.Proteina = 0; }
+            if (food.Proteina is int) { food.Proteina = (int)food.Proteina * food.multiplier; }
+            else if (food.Proteina is double) { food.Proteina = ((double)food.Proteina) * food.multiplier; }
+
+            if (String.IsNullOrEmpty(food.CarboHidratos.ToString())) { food.CarboHidratos = 0; }
+            if (food.CarboHidratos is int) { food.CarboHidratos = (int)food.CarboHidratos * food.multiplier; }
+            else if (food.CarboHidratos is double) { food.CarboHidratos = ((double)food.CarboHidratos) * food.multiplier; }
+
+            if (String.IsNullOrEmpty(food.Lipidos.ToString())) { food.Lipidos = 0; }
+            if (food.Lipidos is int) { food.Lipidos = (int)food.Lipidos * food.multiplier; }
+            else if (food.Lipidos is double) { food.Lipidos = ((double)food.Lipidos) * food.multiplier; }
         }
     }
 }
