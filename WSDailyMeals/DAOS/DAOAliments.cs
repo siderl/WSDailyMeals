@@ -27,10 +27,10 @@ namespace WSDailyMeals.DAOS
         public List<Alimento> GetAlimentsForDiet()
         {
             // Produccion
-            //MongoClient client = new MongoClient("mongodb://ec2-18-219-187-111.us-east-2.compute.amazonaws.com:27017");
+            MongoClient client = new MongoClient("mongodb://18.225.18.62:27017");
 
             //Pruebas
-            MongoClient client = new MongoClient("mongodb://localhost:27017");
+            //MongoClient client = new MongoClient("mongodb://localhost:27017");
 
             IMongoDatabase db = client.GetDatabase("DailyMeals");
 
