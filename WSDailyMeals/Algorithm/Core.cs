@@ -22,8 +22,6 @@ namespace WSDailyMeals.Algorithm
         /// <param name="gCount">Conteo de generación</param>
         public Core(double Lips, double Carbs, double Prots, int popSize = 50, int gCount = 100)
         {
-            //TODO: Consultar con Tonatiuh.
-            // consultar tamaño optimo de poblaciones / generaciones
             double factor = .05;
             int dimensions = 10;
             
@@ -32,14 +30,11 @@ namespace WSDailyMeals.Algorithm
             List<Individuo> hijos = new List<Individuo>(popSize);
 
             dict = new Dictionaries();
-
-            //
-            Console.WriteLine("Padres.");
+            
             for (int i = 0; i < popSize; i++)
             {
                 Individuo x = new Individuo(ref selector, Lips, Carbs, Prots, ref dict);
                 padres.Add(x);
-                Console.WriteLine("Padre " + i.ToString() + ": " + x.ToString());
                 //Because the Random function is based on time.
                 System.Threading.Thread.Sleep(5);
             }
